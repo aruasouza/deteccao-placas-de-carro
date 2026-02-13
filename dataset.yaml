@@ -1,0 +1,13 @@
+path: datasets/dataset1/preparado
+
+train: images/train
+val: images/val
+test: images/test
+
+nc: 2
+names:
+  - carro_me
+  - carro_br
+
+kpt_shape: [4, 3]
+flip_idx: [1, 0, 3, 2]
