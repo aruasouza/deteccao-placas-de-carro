@@ -1,5 +1,4 @@
-from ultralytics import YOLO
-from main_pipeline import *
+from utils.main_pipeline import *
 import cv2
 import os
 import glob
@@ -15,8 +14,6 @@ NUMEROS_INDEX = [3,5,6]
 ORIGEM = os.path.join('datasets','dataset1','bruto')
 NAMES = os.path.join('datasets','dataset1','preparado','images')
 DESTINO = os.path.join('datasets','dataset_chars')
-
-model = YOLO('runs/pose/train3/weights/best.pt').to('cpu')
 
 images_br = sorted(glob.glob(os.path.join(ORIGEM, 'cars-br', '*.jpg')))
 labels_br = sorted(glob.glob(os.path.join(ORIGEM, 'cars-br', '*.txt')))
