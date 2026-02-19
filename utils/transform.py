@@ -49,10 +49,25 @@ def split_chars(img,nchars,margin=40):
         final_images.append(canvas)
     return final_images
 
+def split_chars_2(img,nchars,margin=5):
+    height,width = img.shape
+    estimated_cut_points = [i*(width//nchars) for i in range(0,nchars+1)]
+    images = [img[:,max(c1-margin,0):c2+margin] for c1,c2 in zip(estimated_cut_points[:-1], estimated_cut_points[1:])]
+    canvas = np.ones((height, 2*margin+(width//nchars))) * img.mean()
+    canv1 = canvas.copy()
+    canv1[:,:images[0].shape[1]] = images[0]
+    images[0] = canv1
+    canv2 = canvas.copy()
+    canv2[:,:images[-1].shape[1]] = images[-1]
+    images[-1] = canv2
+    return images
+
 def clean_objects(img):
     labeled = label(img)
     props = regionprops_table(labeled, properties=['area'])
     areas = props['area']
+    if len(areas) == 0:
+        return img
     max_area_label = np.argmax(areas) + 1
     cleaned = img.copy()
     cleaned[labeled != max_area_label] = 0.0

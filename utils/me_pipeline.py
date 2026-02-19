@@ -6,7 +6,7 @@ LETRAS_INDEX = [0,1,2,4]
 NUMEROS_INDEX = [3,5,6]
 
 def crop(img):
-    return img[60:190,30:470]
+    return img[60:190,40:460]
 
 def pipeline(img,percentile = 35):
     img = crop(img)

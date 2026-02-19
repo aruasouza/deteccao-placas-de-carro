@@ -7,21 +7,37 @@ from utils.inferencia import ONNXYOLO
 
 model = ONNXYOLO('onnx_models/best.onnx')
 
-def extraction_pipeline(img, model=model, onnx = True):
-    if onnx:
-        deteccao = detect_placa_onnx(model, img)
-    else:
-        deteccao = detect_placa(model, img)
+def full_pipeline(img, model=model):
+    deteccao = detect_placa_onnx(model, img)
     if deteccao is None:
         return None
-    gray = grayscale(img)
-    croped_img = get_croped_image(deteccao, gray)
-    warped_img = warp_image(deteccao, croped_img)
-    if deteccao['classe'] == 1:
-        final_output = br_pipeline.pipeline(warped_img, 30)
-    else:
-        final_output = me_pipeline.pipeline(warped_img, 35)
-    return final_output
+    try:
+        gray = grayscale(img)
+        croped_img = get_croped_image(deteccao, gray)
+        warped_img = warp_image(deteccao, croped_img)
+        if deteccao['classe'] == 1:
+            final_output = br_pipeline.pipeline(warped_img, 30)
+        else:
+            final_output = me_pipeline.pipeline(warped_img, 35)
+        return final_output
+    except:
+        return None
+    
+def extract_characters(img, model=model, process=True):
+    deteccao = detect_placa_onnx(model, img)
+    if deteccao is None:
+        return None
+    try:
+        gray = grayscale(img)
+        croped_img = get_croped_image(deteccao, gray)
+        warped_img = warp_image(deteccao, croped_img)
+        if deteccao['classe'] == 1:
+            final_output = br_pipeline.extract_pipeline(warped_img, process, 30)
+        else:
+            final_output = me_pipeline.extract_pipeline(warped_img, process, 35)
+        return final_output
+    except:
+        return None
 
 def detect_placa(model,img):
     results = model(img)
@@ -36,7 +52,7 @@ def detect_placa(model,img):
     except:
         return None
 
-def detect_placa_onnx(model, img):
+def detect_placa_onnx(model, img, minconf = 0):
     outputs, (orig_h, orig_w) = model(img)
     if not outputs or len(outputs) == 0:
         return None
@@ -49,6 +65,8 @@ def detect_placa_onnx(model, img):
     best_det = detections[0]
     x1, y1, x2, y2 = best_det[:4]
     conf = best_det[4]
+    if conf < minconf:
+        return None
     classe = int(best_det[5])
     kp_data = best_det[6:]
     kp = [(int(kp_data[i] * scale_x), int(kp_data[i+1] * scale_y)) 

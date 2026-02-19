@@ -17,6 +17,9 @@ def detect_reversed(img):
     per5 = np.percentile(flat, 5)
     return (median - per5) < (per95 - median)
 
+# def extract_pipeline(img):
+#     return crop(img)
+
 def pipeline(img,percentile = 30):
     img = crop(img)
     rev = detect_reversed(img)
