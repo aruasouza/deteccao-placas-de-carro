@@ -1,3 +1,4 @@
-datasets
+datasets/dataset1
+datasets/dataset_chars
 yolo_basemodels
 runs

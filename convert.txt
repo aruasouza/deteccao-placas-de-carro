@@ -5,5 +5,5 @@ git clone https://github.com/airockchip/rknn-toolkit2.git
 cd rknn-toolkit2/rknn-toolkit2/packages/x86_64
 python3 -m venv /home/ubuntu/venv
 /home/ubuntu/venv/bin/pip install --upgrade pip setuptools wheel
-/home/ubuntu/venv/bin/pip install numpy opencv-python onnx protobuf
 /home/ubuntu/venv/bin/pip install rknn_toolkit2-2.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+apt install python3-opencv

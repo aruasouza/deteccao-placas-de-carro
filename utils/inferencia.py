@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 from PIL import Image
+from rknn.api import RKNN
 
 class ONNXYOLO:
     def __init__(self, path):
@@ -26,18 +27,6 @@ class ONNXCharModel:
         self.input_name = self.session.get_inputs()[0].name
         self.input_shape = self.session.get_inputs()[0].shape
     
-    # def predict(self, imgs):
-    #     h, w = self.input_shape[2:]
-    #     batch = []
-    #     for img in imgs:
-    #         img_prep = cv2.resize(img, (w, h)).astype(np.float32)
-    #         img_norm = (img_prep - 0.5) / 0.5
-    #         img_norm = img_norm[np.newaxis, ...]
-    #         batch.append(img_norm)
-    #     batch = np.array(batch)
-    #     outputs = self.session.run(None, {self.input_name: batch})
-    #     return outputs
-    
     def predict(self, imgs):
         h, w = self.input_shape[2:]
         batch = []
@@ -56,6 +45,49 @@ class ONNXCharModel:
         outputs = self.session.run(None, {self.input_name: batch})
         return outputs
 
+    
+    def __call__(self, *args, **kwds):
+        return self.predict(*args, **kwds)
+    
+class RKNNYOLO:
+    def __init__(self, path):
+        self.rknn = RKNN()
+        self.rknn.load_rknn(path)
+        self.rknn.init_runtime()
+        self.input_shape = (1, 3, 640, 640)
+        
+    def predict(self, img):
+        orig_h, orig_w = img.shape[:2]
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img_prep = cv2.resize(img_rgb, (640, 640)).astype(np.float32) / 255.0
+        img_prep = np.transpose(img_prep, (2, 0, 1))[np.newaxis, ...]
+        outputs = self.rknn.inference(inputs=[img_prep])
+        return outputs, (orig_h, orig_w)
+    
+    def __call__(self, *args, **kwds):
+        return self.predict(*args, **kwds)
+
+class RKNNCharModel:
+    def __init__(self, path):
+        self.rknn = RKNN()
+        self.rknn.load_rknn(path)
+        self.rknn.init_runtime()
+        self.input_shape = (1, 1, 28, 28)
+    
+    def predict(self, imgs):
+        batch = []
+        for img in imgs:
+            img_uint8 = (img * 255).astype(np.uint8)
+            pil_img = Image.fromarray(img_uint8, mode='L')
+            pil_img = pil_img.resize((28, 28), Image.BILINEAR)
+            img_array = np.array(pil_img).astype(np.float32) / 255.0
+            img_norm = (img_array - 0.5) / 0.5
+            img_norm = img_norm[np.newaxis, ...]
+            batch.append(img_norm)
+        
+        batch = np.array(batch)
+        outputs = self.rknn.inference(inputs=[batch])
+        return outputs
     
     def __call__(self, *args, **kwds):
         return self.predict(*args, **kwds)
