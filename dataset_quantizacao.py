@@ -18,7 +18,7 @@ with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
         npy_path = OUTPUT_DIR / 'yolo' / f'sample_{i:04d}.npy'
         npy_path.parent.mkdir(exist_ok=True)
         np.save(npy_path, img[np.newaxis, ...])
-        simple_path = Path('yolo') / f'sample_{i:04d}.npy'
+        simple_path = 'yolo/' + f'sample_{i:04d}.npy'
         f.write(f'{simple_path}\n')
 print(f'Dataset criado: YOLO ({len(yolo_images)} amostras)')
 
@@ -41,7 +41,7 @@ for model_name, img_dir in configs:
             npy_path = OUTPUT_DIR / model_name / f'sample_{i:04d}.npy'
             npy_path.parent.mkdir(exist_ok=True)
             np.save(npy_path, img[np.newaxis, ...])
-            simple_path = Path(model_name) / f'sample_{i:04d}.npy'
+            simple_path = f'{model_name}/' + f'sample_{i:04d}.npy'
             f.write(f'{simple_path}\n')
     
     print(f'Dataset criado: {model_name} ({len(images)} amostras)')
