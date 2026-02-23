@@ -50,10 +50,7 @@ for tipo in ['numeros','letras']:
             opset_version=17,
             input_names=["input"],
             output_names=["output"],
-            dynamic_axes={
-                "input":  {0: "batch_size"},
-                "output": {0: "batch_size"},
-            },
+            dynamic_axes=None,
             export_params=True,
             do_constant_folding=True,
             verbose=False,
