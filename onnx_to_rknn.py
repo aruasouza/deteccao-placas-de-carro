@@ -8,11 +8,11 @@ DATASET_DIR = Path('datasets/rknn_datasets')
 RKNN_DIR.mkdir(exist_ok=True)
 
 models = [
-    ('yolo26-pose.onnx', 'yolo_dataset.txt'),
     ('br-letras.onnx', 'br-letras_dataset.txt'),
     ('br-numeros.onnx', 'br-numeros_dataset.txt'),
     ('me-letras.onnx', 'me-letras_dataset.txt'),
-    ('me-numeros.onnx', 'me-numeros_dataset.txt')
+    ('me-numeros.onnx', 'me-numeros_dataset.txt'),
+    ('yolo26-pose.onnx', 'yolo_dataset.txt'),
 ]
 
 for onnx_file, dataset_file in models:
@@ -28,9 +28,14 @@ for onnx_file, dataset_file in models:
         quantized_method='channel'
     )
     
-    if rknn.load_onnx(model=str(ONNX_DIR / onnx_file)) != 0:
-        print(f'Falha ao carregar {onnx_file}')
-        continue
+    if 'yolo' not in onnx_file:
+        if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 1, 28, 28]]) != 0:
+            print(f'Falha ao carregar {onnx_file}')
+            continue
+    else:
+        if rknn.load_onnx(model=str(ONNX_DIR / onnx_file)) != 0:
+            print(f'Falha ao carregar {onnx_file}')
+            continue
     
     if rknn.build(do_quantization=True, dataset=str(DATASET_DIR / dataset_file)) != 0:
         print(f'Falha no build de {onnx_file}')
