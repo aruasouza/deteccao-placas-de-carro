@@ -21,7 +21,12 @@ for onnx_file, dataset_file in models:
     print(f'{"="*60}')
     
     rknn = RKNN(verbose=True)
-    rknn.config(target_platform='rk3568')
+    rknn.config(
+        target_platform='rk3568',
+        quantized_dtype='asymmetric_quantized-u8',
+        quantized_algorithm='normal',
+        quantized_method='channel'
+    )
     
     if rknn.load_onnx(model=str(ONNX_DIR / onnx_file)) != 0:
         print(f'Falha ao carregar {onnx_file}')

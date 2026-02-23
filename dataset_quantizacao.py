@@ -18,7 +18,7 @@ with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
         npy_path = OUTPUT_DIR / 'yolo' / f'sample_{i:04d}.npy'
         npy_path.parent.mkdir(exist_ok=True)
         np.save(npy_path, img[np.newaxis, ...])
-        f.write(f'{npy_path.absolute()}\n')
+        f.write(f'{npy_path}\n')
 print(f'Dataset criado: YOLO ({len(yolo_images)} amostras)')
 
 configs = [
@@ -40,8 +40,8 @@ for model_name, img_dir in configs:
             npy_path = OUTPUT_DIR / model_name / f'sample_{i:04d}.npy'
             npy_path.parent.mkdir(exist_ok=True)
             np.save(npy_path, img[np.newaxis, ...])
-            f.write(f'{npy_path.absolute()}\n')
+            f.write(f'{npy_path}\n')
     
     print(f'Dataset criado: {model_name} ({len(images)} amostras)')
 
-print('\nDatasets de quantização gerados com dados reais!')
+print('\nDatasets de quantização gerados')
