@@ -23,7 +23,7 @@ for onnx_file, dataset_file in models:
     rknn = RKNN(verbose=True)
     rknn.config(
         target_platform='rk3568',
-        quantized_dtype='asymmetric_quantized-u8',
+        quantized_dtype='w8a8',
         quantized_algorithm='normal',
         quantized_method='channel'
     )
