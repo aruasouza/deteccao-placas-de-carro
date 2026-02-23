@@ -8,7 +8,7 @@ DATASET_DIR = Path('datasets/rknn_datasets')
 RKNN_DIR.mkdir(exist_ok=True)
 
 models = [
-    ('best.onnx', 'yolo_dataset.txt'),
+    ('yolo26-pose.onnx', 'yolo_dataset.txt'),
     ('br-letras.onnx', 'br-letras_dataset.txt'),
     ('br-numeros.onnx', 'br-numeros_dataset.txt'),
     ('me-letras.onnx', 'me-letras_dataset.txt'),
