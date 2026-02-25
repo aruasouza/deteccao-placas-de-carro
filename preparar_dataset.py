@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 import random
 import shutil
 import glob
+import os
 
 PATH = os.path.join('datasets','dataset1','bruto')
 DESTINO = os.path.join('datasets','dataset1','preparado')
+os.makedirs(DESTINO, exist_ok=True)
 
 classes = {
     'cars-me':0,
@@ -61,14 +63,15 @@ if __name__ == '__main__':
                 name = image.split('.')[0]
                 anot = parse_anotation(name, folder)
                 corners = get_corners(anot)
-                coco_ann = coco_anotation(classes[folder], corners, image)
+                coco_ann = coco_anotation(classes[folder], corners, cv2.imread(img_path))
                 dataset.append((name, img_path, coco_ann))
 
     random.seed(0)
     random.shuffle(dataset)
-    train = dataset[:7 * len(dataset) // 10]
-    val = dataset[7 * len(dataset) // 10:9 * len(dataset) // 10]
-    test = dataset[9 * len(dataset) // 10:]
+    piece = len(dataset) // 10
+    train = dataset[:7 * piece]
+    val = dataset[7 * piece:9 * piece]
+    test = dataset[9 * piece:]
 
     shutil.rmtree(DESTINO)
 
@@ -87,7 +90,7 @@ if __name__ == '__main__':
     imagesdir = os.path.join(DESTINO, 'images', part)
     os.makedirs(labelsdir,exist_ok=True)
     os.makedirs(imagesdir,exist_ok=True)
-    for item in train:
+    for item in val:
         shutil.copyfile(item[1], os.path.join(imagesdir, item[0] + '.jpg'))
         with open(os.path.join(labelsdir, item[0] + '.txt'), 'w') as f:
             f.write(item[2])
@@ -97,7 +100,7 @@ if __name__ == '__main__':
     imagesdir = os.path.join(DESTINO, 'images', part)
     os.makedirs(labelsdir,exist_ok=True)
     os.makedirs(imagesdir,exist_ok=True)
-    for item in train:
+    for item in test:
         shutil.copyfile(item[1], os.path.join(imagesdir, item[0] + '.jpg'))
         with open(os.path.join(labelsdir, item[0] + '.txt'), 'w') as f:
             f.write(item[2])

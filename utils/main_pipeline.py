@@ -1,30 +1,40 @@
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import utils.me_pipeline as me_pipeline
 import utils.br_pipeline as br_pipeline
 from utils.inferencia import ONNXYOLO
+import os
+import time
 
-model = ONNXYOLO('onnx_models/best.onnx')
+env = os.getenv('ENV', 'DEV')
+
+if env == 'PROD':
+    from utils.inferencia import RKNNYOLO
+    model = RKNNYOLO('rknn_models/yolo26-pose.rknn')
+else:
+    model = ONNXYOLO('onnx_models/yolo26-pose.onnx')
 
 def full_pipeline(img, model=model):
-    deteccao = detect_placa_onnx(model, img)
+    start = time.time()
+    deteccao = detect_placa(model, img)
+    detect_time = time.time() - start
     if deteccao is None:
         return None
-    try:
-        gray = grayscale(img)
-        croped_img = get_croped_image(deteccao, gray)
-        warped_img = warp_image(deteccao, croped_img)
-        if deteccao['classe'] == 1:
-            final_output = br_pipeline.pipeline(warped_img, 30)
-        else:
-            final_output = me_pipeline.pipeline(warped_img, 35)
-        return final_output
-    except:
-        return None
+    start = time.time()
+    gray = grayscale(img)
+    croped_img = get_croped_image(deteccao, gray)
+    warped_img = warp_image(deteccao, croped_img)
+    preprocessing_time = time.time() - start
+    if deteccao['classe'] == 1:
+        final_output = br_pipeline.pipeline(warped_img, 30)
+    else:
+        final_output = me_pipeline.pipeline(warped_img, 35)
+    final_output['tempo']['tempo_deteccao'] = detect_time
+    final_output['tempo']['tempo_extracao'] += preprocessing_time
+    return final_output
     
-def extract_characters(img, model=model, process=True):
-    deteccao = detect_placa_onnx(model, img)
+def extract_characters(img, model=model):
+    deteccao = detect_placa(model, img)
     if deteccao is None:
         return None
     try:
@@ -32,27 +42,14 @@ def extract_characters(img, model=model, process=True):
         croped_img = get_croped_image(deteccao, gray)
         warped_img = warp_image(deteccao, croped_img)
         if deteccao['classe'] == 1:
-            final_output = br_pipeline.extract_pipeline(warped_img, process, 30)
+            final_output = br_pipeline.extract_pipeline(warped_img, 30)
         else:
-            final_output = me_pipeline.extract_pipeline(warped_img, process, 35)
+            final_output = me_pipeline.extract_pipeline(warped_img, 35)
         return final_output
     except:
         return None
 
-def detect_placa(model,img):
-    results = model(img)
-    if not results:
-        return None
-    res = results[0]
-    try:
-        classe = round(float(res.boxes.cls.numpy()[0]))
-        box = [round(x) for x in res.boxes.xyxy.numpy()[0]]
-        kp = [(round(x),round(y)) for x,y in res.keypoints.xy.numpy()[0]]
-        return {'classe':classe, 'box': box, 'kp':kp}
-    except:
-        return None
-
-def detect_placa_onnx(model, img, minconf = 0):
+def detect_placa(model, img, minconf = 0):
     outputs, (orig_h, orig_w) = model(img)
     if not outputs or len(outputs) == 0:
         return None
@@ -97,47 +94,3 @@ def grayscale(img):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     gray = (gray / 255)
     return gray
-
-def draw_results(img, resposta):
-    img_result = draw_bounding_box(img, resposta)
-    img_result = draw_keypoints(img_result, resposta)
-    return img_result
-
-def draw_keypoints(img, resposta, color=(0, 0, 255), radius=3):
-    img_with_keypoints = img.copy()
-    keypoints = resposta['kp']
-    for kp in keypoints:
-        x, y = kp
-        cv2.circle(img_with_keypoints, (int(x), int(y)), radius, color, -1)
-    return img_with_keypoints
-
-def draw_bounding_box(img,resposta):
-    result_image = img.copy()
-    x1, y1, x2, y2 = resposta['box']
-    cv2.rectangle(result_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    return result_image
-
-def plot_extracted_chars(extracted):
-    letras = extracted['letras']
-    numeros = extracted['numeros']
-    total = len(letras) + len(numeros)
-    fig, axes = plt.subplots(1, total, figsize=(total * 2, 3))
-    if total == 1:
-        axes = [axes]
-    for i, letra in enumerate(letras):
-        axes[i].imshow(letra, cmap='gray')
-        axes[i].set_title(f'Letra {i+1}')
-        axes[i].axis('off')
-    for i, numero in enumerate(numeros):
-        axes[len(letras) + i].imshow(numero, cmap='gray')
-        axes[len(letras) + i].set_title(f'Número {i+1}')
-        axes[len(letras) + i].axis('off')
-    plt.tight_layout()
-    plt.show()
-
-def show_image(img,color = False):
-    if color:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    plt.imshow(img)
-    plt.axis('off')
-    plt.show()

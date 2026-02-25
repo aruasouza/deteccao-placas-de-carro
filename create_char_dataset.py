@@ -21,11 +21,7 @@ labels_br = sorted(glob.glob(os.path.join(ORIGEM, 'cars-br', '*.txt')))
 images_me = sorted(glob.glob(os.path.join(ORIGEM, 'cars-me', '*.jpg')))
 labels_me = sorted(glob.glob(os.path.join(ORIGEM, 'cars-me', '*.txt')))
 
-nimages = len(images_br + images_me)
-
 index = 0
-count = 0
-
 for direc in ['train','val','test']:
     print(f'Iniciando dataset "{direc}"')
     img_names = set(os.listdir(os.path.join(NAMES, direc)))
@@ -39,26 +35,22 @@ for direc in ['train','val','test']:
     for img,label in dataset_br:
         plate = parse_anotation(label)
         chars = list(plate)
-        image_chars = extraction_pipeline(model,cv2.imread(img))
+        image_chars = extract_characters(cv2.imread(img))
         if image_chars is None:
-            count += 1
             continue
         letras = image_chars['letras']
         if len(letras) != 3:
-            count += 1
             continue
         for i in range(3):
             cv2.imwrite(os.path.join(destino_letras, f'{chars[i]}_{index}.jpg'), (letras[i] * 255).astype('uint8'))
             index += 1
         numeros = image_chars['numeros']
         if len(numeros) != 4:
-            count += 1
             continue
         for i in range(4):
             cv2.imwrite(os.path.join(destino_numeros, f'{chars[i+3]}_{index}.jpg'), (numeros[i] * 255).astype('uint8'))
             index += 1
-        count += 1
-        print(f'Processado: {round(100*count/nimages,1)}%')
+        print(f'Processado: {index}')
     destino = os.path.join(DESTINO, direc, 'me')
     destino_letras = os.path.join(destino, 'letras')
     os.makedirs(destino_letras, exist_ok=True)
@@ -67,23 +59,19 @@ for direc in ['train','val','test']:
     for img,label in dataset_me:
         plate = parse_anotation(label)
         chars = list(plate)
-        image_chars = extraction_pipeline(model, cv2.imread(img))
+        image_chars = extract_characters(cv2.imread(img))
         if image_chars is None:
-            count += 1
             continue
         letras = image_chars['letras']
         if len(letras) != len(LETRAS_INDEX):
-            count += 1
             continue
         for i,j in enumerate(LETRAS_INDEX):
             cv2.imwrite(os.path.join(destino_letras, f'{chars[j]}_{index}.jpg'), (letras[i] * 255).astype('uint8'))
             index += 1
         numeros = image_chars['numeros']
         if len(numeros) != len(NUMEROS_INDEX):
-            count += 1
             continue
         for i,j in enumerate(NUMEROS_INDEX):
             cv2.imwrite(os.path.join(destino_numeros, f'{chars[j]}_{index}.jpg'), (numeros[i] * 255).astype('uint8'))
             index += 1
-        count += 1
-        print(f'Processado: {round(100*count/nimages,1)}%')
+        print(f'Processado: {index}')

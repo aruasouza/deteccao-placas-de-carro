@@ -2,7 +2,12 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 from PIL import Image
-from rknn.api import RKNN
+import os
+
+env = os.getenv('ENV', 'DEV')
+
+if env == 'PROD':
+    from rknn.api import RKNN
 
 class ONNXYOLO:
     def __init__(self, path):
@@ -45,9 +50,34 @@ class ONNXCharModel:
         outputs = self.session.run(None, {self.input_name: batch})
         return outputs
 
+    def __call__(self, *args, **kwds):
+        return self.predict(*args, **kwds)
+    
+class ONNXCharModel:
+    def __init__(self, path):
+        self.session = ort.InferenceSession(path)
+        self.input_name = self.session.get_inputs()[0].name
+        self.input_shape = self.session.get_inputs()[0].shape
+    
+    def predict(self, imgs):
+        h, w = self.input_shape[2:]
+        results = []
+        for img in imgs:
+            img_uint8 = (img * 255).astype(np.uint8)
+            pil_img = Image.fromarray(img_uint8, mode='L')
+            pil_img = pil_img.resize((w, h), Image.BILINEAR)
+            img_array = np.array(pil_img).astype(np.float32) / 255.0
+            img_norm = (img_array - 0.5) / 0.5
+            img_norm = img_norm[np.newaxis, np.newaxis, ...]
+            
+            output = self.session.run(None, {self.input_name: img_norm})
+            results.append(output[0])
+        
+        return [np.concatenate(results, axis=0)]
     
     def __call__(self, *args, **kwds):
         return self.predict(*args, **kwds)
+
     
 class RKNNYOLO:
     def __init__(self, path):
@@ -75,19 +105,19 @@ class RKNNCharModel:
         self.input_shape = (1, 1, 28, 28)
     
     def predict(self, imgs):
-        batch = []
+        results = []
         for img in imgs:
             img_uint8 = (img * 255).astype(np.uint8)
             pil_img = Image.fromarray(img_uint8, mode='L')
             pil_img = pil_img.resize((28, 28), Image.BILINEAR)
             img_array = np.array(pil_img).astype(np.float32) / 255.0
             img_norm = (img_array - 0.5) / 0.5
-            img_norm = img_norm[np.newaxis, ...]
-            batch.append(img_norm)
+            img_norm = img_norm[np.newaxis, np.newaxis, ...]
+            
+            output = self.rknn.inference(inputs=[img_norm])
+            results.append(output[0])
         
-        batch = np.array(batch)
-        outputs = self.rknn.inference(inputs=[batch])
-        return outputs
+        return [np.concatenate(results, axis=0)]
     
     def __call__(self, *args, **kwds):
         return self.predict(*args, **kwds)
