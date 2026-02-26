@@ -16,4 +16,7 @@ RUN python3.12 -m venv /home/ubuntu/venv && \
 
 WORKDIR /home/ubuntu
 
-CMD ["bash", "-c", "git clone https://github.com/aruasouza/deteccao-placas-de-carro/ && cd deteccao-placas-de-carro && /home/ubuntu/venv/bin/python onnx_to_rknn.py"]
+COPY run.sh /home/ubuntu/run.sh
+RUN chmod +x /home/ubuntu/run.sh
+
+CMD ["/home/ubuntu/run.sh"]

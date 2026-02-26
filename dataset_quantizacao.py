@@ -40,7 +40,7 @@ for model_name, img_dir in configs:
             
             npy_path = OUTPUT_DIR / model_name / f'sample_{i:04d}.npy'
             npy_path.parent.mkdir(exist_ok=True)
-            np.save(npy_path, img[np.newaxis, ...])
+            np.save(npy_path, img[np.newaxis,np.newaxis, ...])
             simple_path = f'{model_name}/' + f'sample_{i:04d}.npy'
             f.write(f'{simple_path}\n')
     
