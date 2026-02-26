@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import onnxruntime as ort
 from PIL import Image
 import os
 
@@ -8,6 +7,8 @@ env = os.getenv('ENV', 'DEV')
 
 if env == 'PROD':
     from rknn.api import RKNN
+else:
+    import onnxruntime as ort
 
 class ONNXYOLO:
     def __init__(self, path):

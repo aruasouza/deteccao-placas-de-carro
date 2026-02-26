@@ -21,7 +21,7 @@ index = 0
 direc = 'test'
 img_names = set(os.listdir(os.path.join(NAMES, direc)))
 dataset_me = [(img,label) for img,label in zip(images_me, labels_me) if os.path.basename(img) in img_names]
-dataset_br = [(img, label) for img, label in zip(images_br, labels_br) if os.path.basename(img) in img_names]
+dataset_br = [(img,label) for img, label in zip(images_br, labels_br) if os.path.basename(img) in img_names]
 os.makedirs(destino, exist_ok=True)
 for img,label in dataset_br:
     plate = parse_anotation(label)
