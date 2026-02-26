@@ -7,9 +7,9 @@ python3 -m venv /home/ubuntu/venv
 /home/ubuntu/venv/bin/pip install --upgrade pip setuptools wheel
 /home/ubuntu/venv/bin/pip install rknn_toolkit2-2.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 apt install python3-opencv
-cd /home/ubuntu
-git clone https://github.com/aruasouza/deteccao-placas-de-carro/
 /home/ubuntu/venv/bin/pip install setuptools==80.9.0
 /home/ubuntu/venv/bin/pip install onnx==1.18.0 onnxruntime==1.18.0
+cd /home/ubuntu
+git clone https://github.com/aruasouza/deteccao-placas-de-carro/
 cd deteccao-placas-de-carro
 /home/ubuntu/venv/bin/python onnx_to_rknn.py

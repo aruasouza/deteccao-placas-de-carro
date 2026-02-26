@@ -1,0 +1,5 @@
+services:
+  rknn-converter:
+    build: .
+    volumes:
+      - ./rknn_models:/home/ubuntu/rknn_models

@@ -1,0 +1,19 @@
+FROM ubuntu:24.04
+
+RUN apt update && apt install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt update && \
+    apt install -y python3.12 python3.12-venv python3.12-dev python3-pip python3-opencv git wget
+
+WORKDIR /home/ubuntu
+
+RUN python3.12 -m venv /home/ubuntu/venv && \
+    /home/ubuntu/venv/bin/pip install --upgrade pip setuptools wheel && \
+    wget https://github.com/airockchip/rknn-toolkit2/raw/refs/heads/master/rknn-toolkit2/packages/x86_64/rknn_toolkit2-2.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl && \
+    /home/ubuntu/venv/bin/pip install rknn_toolkit2-2.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl && \
+    rm rknn_toolkit2-2.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl && \
+    /home/ubuntu/venv/bin/pip install setuptools==80.9.0 onnx==1.18.0 onnxruntime==1.18.0
+
+WORKDIR /home/ubuntu
+
+CMD ["bash", "-c", "git clone https://github.com/aruasouza/deteccao-placas-de-carro/ && cd deteccao-placas-de-carro && /home/ubuntu/venv/bin/python onnx_to_rknn.py"]

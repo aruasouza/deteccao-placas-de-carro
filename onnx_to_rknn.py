@@ -2,7 +2,7 @@ from rknn.api import RKNN
 from pathlib import Path
 
 ONNX_DIR = Path('onnx_models')
-RKNN_DIR = Path('rknn_models')
+RKNN_DIR = Path('/home/ubuntu/rknn_models')
 DATASET_DIR = Path('datasets/rknn_datasets')
 
 RKNN_DIR.mkdir(exist_ok=True)
