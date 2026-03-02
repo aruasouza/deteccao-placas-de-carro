@@ -82,10 +82,8 @@ class RKNNCharModel:
         for img in imgs:
             img_uint8 = (img * 255).astype(np.uint8)
             pil_img = Image.fromarray(img_uint8, mode='L')
-            pil_img = pil_img.resize((28, 28), Image.BILINEAR)
-            # img_array = np.array(pil_img).astype(np.float32) / 255.0
-            # img_norm = (img_array - 0.5) / 0.5
-            img_norm = img_norm[np.newaxis, np.newaxis, ...]
+            pil_img = np.array(pil_img.resize((28, 28), Image.BILINEAR)).astype('uint8')
+            img_norm = pil_img[np.newaxis, np.newaxis, ...]
             
             output = self.rknn.inference(inputs=[img_norm])
             results.append(output[0])
