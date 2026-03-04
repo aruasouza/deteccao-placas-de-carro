@@ -25,7 +25,8 @@ for onnx_file, dataset_file in models:
         target_platform='rk3568',
         quantized_dtype='w8a8',
         quantized_algorithm='normal',
-        quantized_method='channel'
+        quantized_method='channel',
+        outputs_pass_through=False
     )
     
     if 'yolo' not in onnx_file:

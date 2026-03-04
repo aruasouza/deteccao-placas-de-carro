@@ -62,10 +62,24 @@ class RKNNYOLO:
     def predict(self, img):
         orig_h, orig_w = img.shape[:2]
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img_prep = cv2.resize(img_rgb, (640, 640)).astype(np.float32) / 255.0
+        img_prep = cv2.resize(img_rgb, (640, 640)).astype(np.uint8)
         img_prep = np.transpose(img_prep, (2, 0, 1))[np.newaxis, ...]
         outputs = self.rknn.inference(inputs=[img_prep])
         return outputs, (orig_h, orig_w)
+    # def predict(self, img):
+    #     orig_h, orig_w = img.shape[:2]
+    #     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #     img_prep = cv2.resize(img_rgb, (640, 640)).astype(np.uint8)
+    #     img_prep = np.transpose(img_prep, (2, 0, 1))[np.newaxis, ...]
+    #     outputs = self.rknn.inference(inputs=[img_prep])
+    #     dequantized_outputs = []
+    #     for i, output in enumerate(outputs):
+    #         output_attr = self.rknn.get_output_attr(i)
+    #         scale = output_attr['scale']
+    #         zero_point = output_attr['zero_point']
+    #         output_float = (output.astype(np.float32) - zero_point) * scale
+    #         dequantized_outputs.append(output_float)
+    #     return dequantized_outputs, (orig_h, orig_w)
     
     def __call__(self, *args, **kwds):
         return self.predict(*args, **kwds)
@@ -84,11 +98,24 @@ class RKNNCharModel:
             pil_img = Image.fromarray(img_uint8, mode='L')
             pil_img = np.array(pil_img.resize((28, 28), Image.BILINEAR)).astype('uint8')
             img_norm = pil_img[np.newaxis, np.newaxis, ...]
-            
             output = self.rknn.inference(inputs=[img_norm])
             results.append(output[0])
-        
         return [np.concatenate(results, axis=0)]
+    # def predict(self, imgs):
+    #     results = []
+    #     for img in imgs:
+    #         img_uint8 = (img * 255).astype(np.uint8)
+    #         pil_img = Image.fromarray(img_uint8, mode='L')
+    #         pil_img = np.array(pil_img.resize((28, 28), Image.BILINEAR)).astype('uint8')
+    #         img_norm = pil_img[np.newaxis, np.newaxis, ...]
+            
+    #         output = self.rknn.inference(inputs=[img_norm])
+    #         output_attr = self.rknn.get_output_attr(0)
+    #         scale = output_attr['scale']
+    #         zero_point = output_attr['zero_point']
+    #         output_float = (output[0].astype(np.float32) - zero_point) * scale
+    #         results.append(output_float)
+    #     return [np.concatenate(results, axis=0)]
     
     def __call__(self, *args, **kwds):
         return self.predict(*args, **kwds)
