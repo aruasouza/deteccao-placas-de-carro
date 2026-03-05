@@ -24,6 +24,8 @@ def full_pipeline(img, model=model):
     gray = grayscale(img)
     croped_img = get_croped_image(deteccao, gray)
     warped_img = warp_image(deteccao, croped_img)
+    if warped_img is None:
+        return None
     preprocessing_time = time.time() - start
     if deteccao['classe'] == 1:
         final_output = br_pipeline.pipeline(warped_img, 30)
@@ -81,14 +83,17 @@ def transform_keypoints(resposta):
     return [(min(nk[0]-x1,x2-x1-1), min(nk[1]-y1,y2-y1-1)) for nk in resposta['kp']]
 
 def warp_image(resposta, img):
-    src_points = transform_keypoints(resposta)
-    width, height = 500, 200
-    dst_points = [(0, 0), (width-1, 0), (width-1, height-1), (0, height-1)]
-    src = np.float32(src_points)
-    dst = np.float32(dst_points)
-    matrix = cv2.getPerspectiveTransform(src, dst)
-    warped_img = cv2.warpPerspective(img, matrix, (width, height))
-    return warped_img
+    try:
+        src_points = transform_keypoints(resposta)
+        width, height = 500, 200
+        dst_points = [(0, 0), (width-1, 0), (width-1, height-1), (0, height-1)]
+        src = np.float32(src_points)
+        dst = np.float32(dst_points)
+        matrix = cv2.getPerspectiveTransform(src, dst)
+        warped_img = cv2.warpPerspective(img, matrix, (width, height))
+        return warped_img
+    except:
+        return None
 
 def grayscale(img):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
