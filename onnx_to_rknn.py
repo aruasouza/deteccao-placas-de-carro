@@ -30,7 +30,9 @@ for onnx_file, dataset_file in models:
             quantized_algorithm='normal',
             quantized_method='layer',
             mean_values=[[127.5]],
-            std_values=[[127.5]]
+            std_values=[[127.5]],
+            custom_quantize_layers={'output0': 'float16'},
+            optimization_level=3
         )
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 1, 28, 28]]) != 0:
             print(f'Falha ao carregar {onnx_file}')
