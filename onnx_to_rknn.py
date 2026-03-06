@@ -28,8 +28,8 @@ for onnx_file, dataset_file in models:
             quantized_dtype='w8a8',
             quantized_algorithm='normal',
             quantized_method='channel',
-            mean = [[127.5,127.5,127.5]],
-            std = [[127.5,127.5,127.5]]
+            mean_values = [[127.5,127.5,127.5]],
+            std_values = [[127.5,127.5,127.5]]
         )
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 1, 28, 28]]) != 0:
             print(f'Falha ao carregar {onnx_file}')
