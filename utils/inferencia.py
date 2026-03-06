@@ -12,7 +12,11 @@ else:
 
 class ONNXYOLO:
     def __init__(self, path):
-        self.session = ort.InferenceSession(path)
+        if env == 'CUDA':
+            import torch
+            self.session = ort.InferenceSession(path,providers=["CUDAExecutionProvider"])
+        else:
+            self.session = ort.InferenceSession(path)
         self.input_name = self.session.get_inputs()[0].name
         self.input_shape = self.session.get_inputs()[0].shape
         
@@ -31,7 +35,11 @@ class ONNXYOLO:
     
 class ONNXCharModel:
     def __init__(self, path):
-        self.session = ort.InferenceSession(path)
+        if env == 'CUDA':
+            import torch
+            self.session = ort.InferenceSession(path,providers=["CUDAExecutionProvider"])
+        else:
+            self.session = ort.InferenceSession(path)
         self.input_name = self.session.get_inputs()[0].name
         self.input_shape = self.session.get_inputs()[0].shape
     
