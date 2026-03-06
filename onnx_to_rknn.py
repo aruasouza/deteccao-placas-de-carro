@@ -25,11 +25,11 @@ for onnx_file, dataset_file in models:
     if 'yolo' not in onnx_file:
         rknn.config(
             target_platform='rk3568',
-            quantized_dtype='w8a8',
+            quantized_dtype='asymmetric_quantized-8',
             quantized_algorithm='normal',
-            quantized_method='channel',
-            mean_values = [[127.5]],
-            std_values = [[127.5]]
+            quantized_method='layer',
+            mean_values=[[127.5]],
+            std_values=[[127.5]]
         )
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 1, 28, 28]]) != 0:
             print(f'Falha ao carregar {onnx_file}')
@@ -37,11 +37,11 @@ for onnx_file, dataset_file in models:
     else:
         rknn.config(
             target_platform='rk3568',
-            quantized_dtype='w8a8',
+            quantized_dtype='asymmetric_quantized-8',
             quantized_algorithm='normal',
-            quantized_method='channel',
-            mean_values = [[0.0,0.0,0.0]],
-            std_values = [[255.0,255.0,255.0]]
+            quantized_method='layer',
+            mean_values=[[0.0, 0.0, 0.0]],
+            std_values=[[255.0, 255.0, 255.0]]
         )
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file)) != 0:
             print(f'Falha ao carregar {onnx_file}')
