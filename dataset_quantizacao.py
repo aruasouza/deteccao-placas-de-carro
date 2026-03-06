@@ -1,9 +1,8 @@
 import numpy as np
-import cv2
 from pathlib import Path
 from PIL import Image
 
-SIZE = 500
+SIZE = 1500
 OUTPUT_DIR = Path('datasets/rknn_datasets')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -13,7 +12,7 @@ with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
         pil_img = Image.open(img_path)
         pil_img = pil_img.resize((640, 640), Image.BILINEAR)
         img = np.array(pil_img)
-        # img = img.transpose(2, 0, 1)
+        img = img.transpose(2, 0, 1)
         npy_path = OUTPUT_DIR / 'yolo' / f'sample_{i:04d}.npy'
         npy_path.parent.mkdir(exist_ok=True)
         np.save(npy_path, img[np.newaxis, ...])
