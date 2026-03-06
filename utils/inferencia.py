@@ -67,7 +67,7 @@ class RKNNYOLO:
         pil_img = Image.fromarray(rgb_image, mode='RGB')
         pil_img = pil_img.resize((w, h), Image.BILINEAR)
         img_array = np.array(pil_img,'uint8')
-        img_prep = np.transpose(img_array, (2, 0, 1))[np.newaxis, ...]
+        img_prep = img_array[np.newaxis, ...]
         outputs = self.rknn.inference(inputs=[img_prep])
         return outputs, img.shape[:2]
     
