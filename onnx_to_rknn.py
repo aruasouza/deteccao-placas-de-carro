@@ -4,7 +4,7 @@ from pathlib import Path
 ONNX_DIR = Path('onnx_models')
 RKNN_DIR = Path('/home/ubuntu/rknn_models')
 DATASET_DIR = Path('datasets/rknn_datasets')
-QUANT = True
+QUANT = False
 
 RKNN_DIR.mkdir(exist_ok=True)
 

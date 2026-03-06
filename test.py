@@ -24,7 +24,8 @@ def test_pipeline():
         
         resultado = full_pipeline(img)
         results['total'] += 1
-        print(f'Imagens analizadas: {results['total']}',end = '\r')
+        tot = results['total']
+        print(f'Imagens analizadas: {tot}',end = '\r')
         
         if resultado:
             placa_lida, confianca = resultado['leitura']
