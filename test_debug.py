@@ -18,11 +18,10 @@ def test_pipeline():
         
         print(f'Placa esperada: {placa_esperada}')
         outputs, (orig_h, orig_w) = main.model(img)
-        print(outputs)
         deteccao = main.detect_placa(main.model, img)
         if deteccao is None:
             print('Nenhuma placa detectada')
-            return
+            continue
         print(f'Detecção: {deteccao}')
         gray = main.grayscale(img)
         croped_img = main.get_croped_image(deteccao, gray)

@@ -13,5 +13,5 @@ model.export(
     half=False,
     verbose=True
 )
-shutil.move(f'runs/pose/{last_train}/weights/best.onnx', 'onnx_models/yolo26-pose.onnx')
-print(f"Model exported to onnx_models/yolo26-pose.onnx")
+shutil.move(f'runs/pose/{last_train}/weights/best.onnx', 'onnx_models/yolo-pose.onnx')
+print(f"Model exported to onnx_models/yolo-pose.onnx")

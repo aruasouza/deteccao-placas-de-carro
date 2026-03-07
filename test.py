@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 from utils.main_pipeline import full_pipeline
 
+env = os.getenv('ENV', 'DEV')
+
 def test_pipeline():
     test_dir = 'datasets/test'
     results = {
@@ -60,4 +62,5 @@ def test_pipeline():
     return results
 
 if __name__ == '__main__':
+    print('ENV:',env)
     test_pipeline()
