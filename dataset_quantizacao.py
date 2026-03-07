@@ -4,10 +4,11 @@ from PIL import Image
 import shutil
 
 SIZE = 500
+YM = 5
 OUTPUT_DIR = Path('datasets/rknn_datasets')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-yolo_images = list(Path('datasets/dataset1/preparado/images/train').glob('*.jpg'))[:SIZE]
+yolo_images = list(Path('datasets/dataset1/preparado/images/train').glob('*.jpg'))[:SIZE * YM]
 shutil.rmtree(OUTPUT_DIR / 'yolo')
 with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
     for i, img_path in enumerate(yolo_images):
