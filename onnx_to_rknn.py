@@ -40,7 +40,7 @@ for onnx_file, dataset_file in models:
         rknn.config(
             target_platform='rk3568',
             quantized_dtype='asymmetric_quantized-8',
-            quantized_algorithm='mmse',
+            quantized_algorithm='normal',
             quantized_method='layer',
             mean_values=[[0.0, 0.0, 0.0]],
             std_values=[[255.0, 255.0, 255.0]],
