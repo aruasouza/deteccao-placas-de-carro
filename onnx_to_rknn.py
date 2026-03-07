@@ -43,7 +43,8 @@ for onnx_file, dataset_file in models:
             quantized_algorithm='mmse',
             quantized_method='layer',
             mean_values=[[0.0, 0.0, 0.0]],
-            std_values=[[255.0, 255.0, 255.0]]
+            std_values=[[255.0, 255.0, 255.0]],
+            optimization_level=3
         )
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 3, 640, 640]]) != 0:
             print(f'Falha ao carregar {onnx_file}')

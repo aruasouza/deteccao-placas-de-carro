@@ -1,12 +1,14 @@
 import numpy as np
 from pathlib import Path
 from PIL import Image
+import shutil
 
-SIZE = 1500
+SIZE = 500
 OUTPUT_DIR = Path('datasets/rknn_datasets')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 yolo_images = list(Path('datasets/dataset1/preparado/images/train').glob('*.jpg'))[:SIZE]
+shutil.rmtree(OUTPUT_DIR / 'yolo')
 with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
     for i, img_path in enumerate(yolo_images):
         pil_img = Image.open(img_path)
@@ -29,6 +31,7 @@ configs = [
 
 for model_name, img_dir in configs:
     images = list(Path(img_dir).glob('*.jpg'))[:SIZE]
+    shutil.rmtree(OUTPUT_DIR / model_name)
     with open(OUTPUT_DIR / f'{model_name}_dataset.txt', 'w') as f:
         for i, img_path in enumerate(images):
             pil_img = Image.open(img_path).convert('L')
