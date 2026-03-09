@@ -17,6 +17,7 @@ with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
         jpg_path = OUTPUT_DIR / 'yolo' / f'sample_{i:04d}.jpg'
         shutil.copy(img_path, jpg_path)
         simple_path = 'yolo/' + f'sample_{i:04d}.jpg'
+        f.write(f'{simple_path}\n')
 print(f'Dataset criado: YOLO ({len(yolo_images)} amostras)')
 
 configs = [
