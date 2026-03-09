@@ -51,53 +51,53 @@ def extract_characters(img, model=model):
     except:
         return None
 
-# def detect_placa(model, img, minconf = 0):
-#     outputs, (orig_h, orig_w) = model(img)
-#     if not outputs or len(outputs) == 0:
-#         return None
-#     input_h, input_w = model.input_shape[2:]
-#     scale_x = orig_w / input_w
-#     scale_y = orig_h / input_h
-#     detections = outputs[0][0]
-#     if len(detections) == 0:
-#         return None
-#     best_det = detections[0]
-#     x1, y1, x2, y2 = best_det[:4]
-#     conf = best_det[4]
-#     if conf < minconf:
-#         return None
-#     classe = int(best_det[5])
-#     kp_data = best_det[6:]
-#     kp = [(int(kp_data[i] * scale_x), int(kp_data[i+1] * scale_y)) 
-#             for i in range(0, len(kp_data), 3)]
-#     box = [int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y)]
-#     return {'classe': classe, 'box': box, 'kp': kp}
-
-def detect_placa(model, img, minconf=0):
+def detect_placa(model, img, minconf = 0):
     outputs, (orig_h, orig_w) = model(img)
     if not outputs or len(outputs) == 0:
         return None
     input_h, input_w = model.input_shape[2:]
     scale_x = orig_w / input_w
     scale_y = orig_h / input_h
-    detections = outputs[0].squeeze(0).T
+    detections = outputs[0][0]
     if len(detections) == 0:
         return None
-    best_det = None
-    best_conf = -1.0
-    for det in detections:
-        class_scores = det[4:6]
-        classe = int(np.argmax(class_scores))
-        conf = class_scores[classe]
-        if conf >= minconf and conf > best_conf:
-            best_conf = conf
-            best_det = (classe, det[6:])
-    if best_det is None:
+    best_det = detections[0]
+    x1, y1, x2, y2 = best_det[:4]
+    conf = best_det[4]
+    if conf < minconf:
         return None
-    classe, kp_data = best_det
-    kp = [(int(kp_data[i] * scale_x), int(kp_data[i+1] * scale_y)) for i in range(0, len(kp_data), 3)]
-    box = [min(kp[0][0],kp[3][0]), min(kp[0][1],kp[1][1]), max(kp[1][0],kp[2][0]), max(kp[2][1],kp[3][1])]
+    classe = int(best_det[5])
+    kp_data = best_det[6:]
+    kp = [(int(kp_data[i] * scale_x), int(kp_data[i+1] * scale_y)) 
+            for i in range(0, len(kp_data), 3)]
+    box = [int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y)]
     return {'classe': classe, 'box': box, 'kp': kp}
+
+# def detect_placa(model, img, minconf=0):
+#     outputs, (orig_h, orig_w) = model(img)
+#     if not outputs or len(outputs) == 0:
+#         return None
+#     input_h, input_w = model.input_shape[2:]
+#     scale_x = orig_w / input_w
+#     scale_y = orig_h / input_h
+#     detections = outputs[0].squeeze(0).T
+#     if len(detections) == 0:
+#         return None
+#     best_det = None
+#     best_conf = -1.0
+#     for det in detections:
+#         class_scores = det[4:6]
+#         classe = int(np.argmax(class_scores))
+#         conf = class_scores[classe]
+#         if conf >= minconf and conf > best_conf:
+#             best_conf = conf
+#             best_det = (classe, det[6:])
+#     if best_det is None:
+#         return None
+#     classe, kp_data = best_det
+#     kp = [(int(kp_data[i] * scale_x), int(kp_data[i+1] * scale_y)) for i in range(0, len(kp_data), 3)]
+#     box = [min(kp[0][0],kp[3][0]), min(kp[0][1],kp[1][1]), max(kp[1][0],kp[2][0]), max(kp[2][1],kp[3][1])]
+#     return {'classe': classe, 'box': box, 'kp': kp}
 
 def get_croped_image(resposta,img):
     x1, y1, x2, y2 = resposta['box']
