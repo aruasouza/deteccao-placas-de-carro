@@ -19,7 +19,7 @@ def test_pipeline():
         print(f'Placa esperada: {placa_esperada}')
         outputs, (orig_h, orig_w) = main.model(img)
         print(f'Origem: {orig_h}, {orig_w}')
-        detections = outputs[0].squeeze(0).T
+        detections = outputs[0][0]
         print(list(detections[0]))
         deteccao = main.detect_placa(main.model, img)
         if deteccao is None:

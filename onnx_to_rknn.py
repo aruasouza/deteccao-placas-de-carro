@@ -5,6 +5,7 @@ ONNX_DIR = Path('onnx_models')
 RKNN_DIR = Path('/home/ubuntu/rknn_models')
 DATASET_DIR = Path('datasets/rknn_datasets')
 QUANT = True
+QUANTYOLO = False
 
 RKNN_DIR.mkdir(exist_ok=True)
 
@@ -36,6 +37,11 @@ for onnx_file, dataset_file in models:
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 1, 28, 28]]) != 0:
             print(f'Falha ao carregar {onnx_file}')
             continue
+
+        if rknn.build(do_quantization=QUANT, dataset=str(DATASET_DIR / dataset_file)) != 0:
+            print(f'Falha no build de {onnx_file}')
+            continue
+
     else:
         rknn.config(
             target_platform='rk3568',
@@ -50,9 +56,9 @@ for onnx_file, dataset_file in models:
             print(f'Falha ao carregar {onnx_file}')
             continue
     
-    if rknn.build(do_quantization=QUANT, dataset=str(DATASET_DIR / dataset_file)) != 0:
-        print(f'Falha no build de {onnx_file}')
-        continue
+        if rknn.build(do_quantization=QUANTYOLO, dataset=str(DATASET_DIR / dataset_file)) != 0:
+            print(f'Falha no build de {onnx_file}')
+            continue
     
     rknn_output = RKNN_DIR / onnx_file.replace('.onnx', '.rknn')
     if rknn.export_rknn(str(rknn_output)) != 0:
