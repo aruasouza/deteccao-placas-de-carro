@@ -41,6 +41,8 @@ def plot_extracted_chars(extracted):
 def show_image(img,color = False):
     if color:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    plt.imshow(img)
+        plt.imshow(img)
+    else:
+        plt.imshow(img,'gray')
     plt.axis('off')
     plt.show()

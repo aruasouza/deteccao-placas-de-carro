@@ -2,6 +2,9 @@ import os
 import cv2
 import numpy as np
 from utils.main_pipeline import full_pipeline
+from dotenv import load_dotenv
+
+load_dotenv()
 
 env = os.getenv('ENV', 'DEV')
 

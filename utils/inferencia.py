@@ -53,7 +53,6 @@ class ONNXCharModel:
             img_array = np.array(pil_img).astype(np.float32) / 255.0
             img_norm = (img_array - 0.5) / 0.5
             img_norm = img_norm[np.newaxis, np.newaxis, ...]
-            
             output = self.session.run(None, {self.input_name: img_norm})
             results.append(output[0])
         
@@ -74,9 +73,10 @@ class RKNNYOLO:
         rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         pil_img = Image.fromarray(rgb_image, mode='RGB')
         pil_img = pil_img.resize((w, h), Image.BILINEAR)
+        # img_array = np.array(pil_img).astype(np.float32)
+        # img_prep = img_array[np.newaxis, ...] / 255
         img_array = np.array(pil_img,'uint8')
-        img_prep = np.transpose(img_array, (2, 0, 1))[np.newaxis, ...]
-        # img_prep = img_array[np.newaxis, ...]
+        img_prep = img_array[np.newaxis, ...]
         outputs = self.rknn.inference(inputs=[img_prep])
         return outputs, img.shape[:2]
     

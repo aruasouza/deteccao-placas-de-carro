@@ -45,7 +45,7 @@ for tipo in ['numeros','letras']:
             dummy_input,
             onnx_path,
             dynamo=True,
-            opset_version=17,
+            opset_version=18,
             input_names=["input"],
             output_names=["output"],
             dynamic_axes=None,

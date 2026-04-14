@@ -5,22 +5,22 @@ from skimage.measure import label, regionprops_table
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
 
-def trashold(img, percentile, reverse=False):
-    height, width = img.shape
-    part_width = width // 7
-    result = np.zeros_like(img)
-    for i in range(7):
-        start = i * part_width
-        end = width if i == 6 else (i + 1) * part_width
-        part = img[:, start:end]
-        if reverse:
-            th = np.percentile(part, 100 - percentile)
-            _, trasholded = cv2.threshold(part, th, 1.0, cv2.THRESH_BINARY)
-        else:
-            th = np.percentile(part, percentile)
-            _, trasholded = cv2.threshold(part, th, 1.0, cv2.THRESH_BINARY_INV)
-        result[:, start:end] = trasholded
-    return result
+# def trashold(img, percentile, reverse=False):
+#     height, width = img.shape
+#     part_width = width // 7
+#     result = np.zeros_like(img)
+#     for i in range(7):
+#         start = i * part_width
+#         end = width if i == 6 else (i + 1) * part_width
+#         part = img[:, start:end]
+#         if reverse:
+#             th = np.percentile(part, 100 - percentile)
+#             _, trasholded = cv2.threshold(part, th, 1.0, cv2.THRESH_BINARY)
+#         else:
+#             th = np.percentile(part, percentile)
+#             _, trasholded = cv2.threshold(part, th, 1.0, cv2.THRESH_BINARY_INV)
+#         result[:, start:end] = trasholded
+#     return result
 
 
 def split_chars(img,nchars,margin=40):
@@ -72,3 +72,24 @@ def clean_objects(img):
     cleaned = img.copy()
     cleaned[labeled != max_area_label] = 0.0
     return cleaned
+
+def sauvola_threshold(img, window_size=201, k=0.1, R=0.5):
+    if window_size % 2 == 0:
+        window_size += 1
+    img_f = img.astype(np.float64)
+    mean = cv2.boxFilter(img_f, ddepth=-1, ksize=(window_size, window_size),
+                         normalize=True, borderType=cv2.BORDER_REFLECT)
+    mean_sq = cv2.boxFilter(img_f ** 2, ddepth=-1,
+                            ksize=(window_size, window_size),
+                            normalize=True, borderType=cv2.BORDER_REFLECT)
+    std = np.sqrt(np.maximum(mean_sq - mean ** 2, 0))
+    threshold = mean * (1.0 + k * (std / R - 1.0))
+    binarized = np.where(img_f < threshold, 1.0, 0.0)
+    return binarized.astype(np.float32)
+
+def trashold(img, percentile, reverse=False, window_size=201, k=0.005, R=0.5):
+    if reverse:
+        binarized = sauvola_threshold(1.0 - img, window_size, k, R)
+    else:
+        binarized = sauvola_threshold(img, window_size, k, R)
+    return binarized

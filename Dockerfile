@@ -22,4 +22,6 @@ COPY run.sh /home/ubuntu/run.sh
 
 RUN chmod +x /home/ubuntu/run.sh
 
+COPY . /home/ubuntu/deteccao-placas-de-carro
+
 CMD ["/home/ubuntu/run.sh"]
