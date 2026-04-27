@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 import cv2
 import numpy as np
@@ -20,7 +23,7 @@ def test_pipeline():
         outputs, (orig_h, orig_w) = main.model(img)
         print(f'Origem: {orig_h}, {orig_w}')
         detections = outputs[0][0]
-        print(list(detections[0]))
+        # print(list(detections[0]))
         deteccao = main.detect_placa(main.model, img)
         if deteccao is None:
             print('Nenhuma placa detectada')

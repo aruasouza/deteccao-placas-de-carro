@@ -5,7 +5,7 @@ ONNX_DIR = Path('onnx_models')
 RKNN_DIR = Path('/home/ubuntu/rknn_models')
 DATASET_DIR = Path('datasets/rknn_datasets')
 QUANT = True
-QUANTYOLO = True
+QUANTYOLO = False
 
 RKNN_DIR.mkdir(exist_ok=True)
 
@@ -44,8 +44,8 @@ for onnx_file, dataset_file in models:
 
     else:
         rknn.config(
-            target_platform='rk3568',
-            quantized_dtype='asymmetric_quantized-8',
+            target_platform='rk3566',
+            quantized_dtype="w8a8",
             quantized_algorithm='normal',
             quantized_method='layer',
             mean_values=[[0.0, 0.0, 0.0]],

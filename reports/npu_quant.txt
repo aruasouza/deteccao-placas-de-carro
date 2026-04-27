@@ -2,15 +2,15 @@
 RELATÓRIO DE TESTE - DETECÇÃO DE PLACAS
 ==================================================
 Total de imagens: 849
-Acertos: 722
-Erros: 127
-Acurácia: 85.04%
+Acertos: 728
+Erros: 121
+Acurácia: 85.75%
 
 ==================================================
 TEMPOS DE INFERÊNCIA (ms)
 ==================================================
-Detecção    - Média: 422.91ms
-Extração    - Média: 85.51ms
-Leitura     - Média: 30.66ms
-Total       - Média: 539.08ms
+Detecção    - Média: 422.10ms
+Extração    - Média: 86.94ms
+Leitura     - Média: 30.18ms
+Total       - Média: 539.22ms
 ==================================================
