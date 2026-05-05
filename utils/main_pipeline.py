@@ -61,7 +61,7 @@ def detect_placa(model, img, minconf = 0):
     detections = outputs[0][0]
     if len(detections) == 0:
         return None
-    best_det = detections[0]
+    best_det = detections[0].T
     x1, y1, x2, y2 = best_det[:4]
     conf = best_det[4]
     if conf < minconf:
