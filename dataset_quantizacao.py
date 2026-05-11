@@ -20,11 +20,22 @@ with open(OUTPUT_DIR / 'yolo_dataset.txt', 'w') as f:
         f.write(f'{simple_path}\n')
 print(f'Dataset criado: YOLO ({len(yolo_images)} amostras)')
 
+placas_images = list(Path('datasets/dataset1/placas/train').glob('*.jpg'))[:SIZE * YM]
+shutil.rmtree(OUTPUT_DIR / 'placas',ignore_errors=True)
+os.makedirs(OUTPUT_DIR / 'placas', exist_ok=True)
+with open(OUTPUT_DIR / 'placas_dataset.txt', 'w') as f:
+    for i, img_path in enumerate(placas_images):
+        jpg_path = OUTPUT_DIR / 'placas' / f'sample_{i:04d}.jpg'
+        shutil.copy(img_path, jpg_path)
+        simple_path = 'placas/' + f'sample_{i:04d}.jpg'
+        f.write(f'{simple_path}\n')
+print(f'Dataset criado: placas ({len(placas_images)} amostras)')
+
 configs = [
     ('br-letras', 'datasets/dataset_chars/train/br/letras'),
     ('br-numeros', 'datasets/dataset_chars/train/br/numeros'),
     ('me-letras', 'datasets/dataset_chars/train/me/letras'),
-    ('me-numeros', 'datasets/dataset_chars/train/me/numeros')
+    ('me-numeros', 'datasets/dataset_chars/train/me/numeros'),
 ]
 
 for model_name, img_dir in configs:

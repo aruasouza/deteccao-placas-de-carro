@@ -468,26 +468,38 @@ def save_sample_predictions(model, loader, device, layout: str,
 
 def export_onnx(model: PlateOCRNet, path: Path, device):
     model.eval()
-
+ 
+    max_classes = max(model.num_classes_per_pos)
+ 
     class ONNXWrapper(nn.Module):
-        def __init__(self, m):
+        def __init__(self, m, max_cls):
             super().__init__()
-            self.m = m
-
+            self.m       = m
+            self.max_cls = max_cls
+ 
         def forward(self, x):
             logits = self.m(x)
-            return torch.stack([lg.argmax(dim=1) for lg in logits], dim=1)
-
-    wrapper = ONNXWrapper(model).to(device)
+            B      = x.size(0)
+            padded = []
+            for lg in logits:
+                if lg.size(1) < self.max_cls:
+                    pad = torch.full((B, self.max_cls - lg.size(1)),
+                                     float('-inf'), device=x.device)
+                    lg = torch.cat([lg, pad], dim=1)
+                padded.append(lg)
+            return torch.stack(padded, dim=1)
+ 
+    wrapper = ONNXWrapper(model, max_classes).to(device)
     dummy   = torch.zeros(1, 1, IMG_H, IMG_W, device=device)
-
+ 
     torch.onnx.export(
         wrapper, dummy, str(path),
         input_names=['input'],
-        output_names=['char_indices'],
-        dynamic_axes={'input': {0: 'batch'}, 'char_indices': {0: 'batch'}},
-        opset_version=17,
+        output_names=['logits'],
+        dynamic_axes=None,
+        opset_version=18,
         do_constant_folding=True,
+        dynamo=True,
     )
     print(f"[ONNX] Modelo exportado → {path}")
 
