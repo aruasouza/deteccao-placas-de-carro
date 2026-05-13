@@ -123,6 +123,7 @@ def export_onnx(model: PlateOCRNet, path: Path, device):
         opset_version=18,
         do_constant_folding=True,
         dynamo=True,
+        export_params=True
     )
     print(f"[ONNX] Modelo exportado → {path}")
     
