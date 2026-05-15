@@ -153,7 +153,8 @@ class PlateOCR:
 
     def __init__(self, path: str):
         if ENV == 'PROD':
-            self._backend = _RKNNBackend(path)
+            # self._backend = _RKNNBackend(path)
+            self._backend = _ONNXBackend(path)
         else:
             self._backend = _ONNXBackend(path)
 

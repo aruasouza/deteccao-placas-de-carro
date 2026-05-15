@@ -63,10 +63,12 @@ class ONNXCharModel:
 
 class RKNNYOLO:
     def __init__(self, path):
+        print('Inicializando YOLO')
         self.rknn = RKNN()
         self.rknn.load_rknn(path)
         self.rknn.init_runtime()
         self.input_shape = (1, 3, 640, 640)
+        print('YOLO inicializado')
         
     def predict(self, img):
         h, w = self.input_shape[2:]

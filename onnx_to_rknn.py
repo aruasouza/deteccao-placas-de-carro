@@ -15,8 +15,8 @@ models = [
     ('me-letras.onnx', 'me-letras_dataset.txt'),
     ('me-numeros.onnx', 'me-numeros_dataset.txt'),
     ('yolo-pose.onnx', 'yolo_dataset.txt'),
-    ('plate_ocr_br.onnx', 'placas_dataset.txt'),
-    ('plate_ocr_me.onnx', 'placas_dataset.txt'),
+    # ('plate_ocr_br.onnx', 'placas_dataset.txt'),
+    # ('plate_ocr_me.onnx', 'placas_dataset.txt'),
 ]
 
 for onnx_file, dataset_file in models:
@@ -34,7 +34,7 @@ for onnx_file, dataset_file in models:
             quantized_method='layer',
             mean_values=[[0.0, 0.0, 0.0]],
             std_values=[[255.0, 255.0, 255.0]],
-            optimization_level=3
+            optimization_level=1
         )
         if rknn.load_onnx(model=str(ONNX_DIR / onnx_file),input_size_list=[[1, 3, 640, 640]]) != 0:
             print(f'Falha ao carregar {onnx_file}')
@@ -48,7 +48,7 @@ for onnx_file, dataset_file in models:
         rknn.config(
             target_platform='rk3566',
             quantized_dtype="w8a8",
-            quantized_algorithm='normal',
+            quantized_algorithm='mmse',
             quantized_method='layer',
             mean_values=[[0.0]],
             std_values=[[255.0]],

@@ -109,6 +109,7 @@ def main(PLACA = 'br', EPOCHS = 15):
     print('Model saved in charmodels')
 
     plt.figure(figsize=(10, 5))
+    plt.suptitle('Resultados do Treinamento')
     plt.subplot(1, 2, 1)
     plt.plot(train_losses, label='Loss de Treinamento')
     plt.legend()

@@ -29,11 +29,11 @@ def full_pipeline(img, model=model):
         return None
     preprocessing_time = time.time() - start
     if deteccao['classe'] == 1:
-        # final_output = br_pipeline.pipeline(warped_img, 30)
-        final_output = inferencia_br(warped_img)
+        final_output = br_pipeline.pipeline(warped_img, 30)
+        # final_output = inferencia_br(warped_img)
     else:
-        # final_output = me_pipeline.pipeline(warped_img, 35)
-        final_output = inferencia_me(warped_img)
+        final_output = me_pipeline.pipeline(warped_img, 35)
+        # final_output = inferencia_me(warped_img)
     final_output['tempo']['tempo_deteccao'] = detect_time
     final_output['tempo']['tempo_extracao'] += preprocessing_time
     return final_output
